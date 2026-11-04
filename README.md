@@ -86,8 +86,6 @@ El ejemplo usa valores de muestra: el adaptador no contacta a SendGrid ni valida
 
 Los tipos y validadores de los canales incorporados están en `dev.notifications.channels`. Los adaptadores y sus fixtures simulados están en `dev.notifications.providers`. El cliente y los contratos genéricos de extensión, incluido `NotificationProvider` con su error `ProviderFailure`, permanecen en `dev.notifications`.
 
-**Migración desde snapshots anteriores:** `EmailNotification`, `SmsNotification`, `PushNotification` y `NotificationValidators` cambiaron de `dev.notifications` a `dev.notifications.channels`. Los cuatro adaptadores y `SimulatedRequest`, `SimulatedResponse` y `SimulatedTransport` pasaron de `dev.notifications` a `dev.notifications.providers`. Actualizá los imports de los tipos que uses y recompilá tu consumidor: no hay clases puente con los nombres anteriores. El JAR y sus coordenadas Maven no cambian.
-
 | Canal / proveedor | Configuración propia | Solicitud simulada | Éxito simulado |
 |---|---|---|---|
 | Email / SendGrid | API key y remitente | `POST /v3/mail/send`, Bearer y JSON | `202` vacío; `X-Message-ID` opcional |
@@ -261,7 +259,3 @@ docker run --rm --network none notifications-demo
 ```
 
 La imagen ejecuta la misma demo sin cuentas ni red durante el runtime. El build sí necesita acceso inicial a las imágenes base y dependencias Maven, salvo que ya estén disponibles localmente.
-
-## Uso de IA
-
-Se usaron OpenCode (incluyendo Kimi), Codex y DeepSeek para explorar y revisar requisitos, proponer y refinar especificaciones/diseño/tareas, y asistir en la implementación. La persona autora definió el alcance, evaluó las propuestas, tomó las decisiones finales y verificó el comportamiento con tests y documentación oficial de proveedores. La IA fue una herramienta de apoyo; los proveedores de este repositorio son simulaciones y no se enviaron notificaciones reales.
