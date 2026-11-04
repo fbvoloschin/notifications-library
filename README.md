@@ -182,7 +182,8 @@ public final class InboxDemo {
 - Ambos requieren un `Executor` administrado por la aplicación: debe ejecutar fuera del hilo llamador y señalizar los rechazos con `RejectedExecutionException`, sin ejecutar inline ni descartar tareas silenciosamente. La librería no lo crea ni lo cierra.
 - Los reintentos se configuran con `RetryPolicy`; por defecto se realiza un intento. Solo se reintentan fallos clasificados explícitamente como transitorios. Ante una aceptación desconocida no se reintenta, para evitar duplicados.
 - Los listeners reciben `RETRYING`, `ACCEPTED` o `FAILED`. No hay evento `SENT`: la aceptación no acredita entrega final. Los listeners son síncronos, deben ser breves y tolerar concurrencia.
-- Los errores exponen una categoría segura, no credenciales, cuerpos crudos ni mensajes de excepción del proveedor.
+- Los fallos de proveedor y las excepciones de validadores no exponen cuerpos ni causas internas. Los validadores incorporados devuelven nombres de campos, no sus valores.
+- Un validador propio debe devolver únicamente identificadores de campos seguros: la librería incluye esas violaciones tal como se reciben en `SendException.violations()`. No incluyas secretos ni datos personales en ellas.
 
 | API | Responsabilidad |
 |---|---|

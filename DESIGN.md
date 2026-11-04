@@ -30,7 +30,7 @@ Cada proveedor modela endpoint, autenticación, payload y respuesta de éxito se
 
 ## Fallos y reintentos
 
-`SendException` normaliza errores de validación, routing, configuración de ejecución y proveedor sin propagar cuerpos o causas potencialmente sensibles. El conteo representa invocaciones efectivas al proveedor; un error previo a la selección informa cero intentos.
+`SendException` normaliza errores de validación, routing, configuración de ejecución y proveedor sin propagar cuerpos o causas internas del proveedor ni excepciones de validadores. Las violaciones devueltas por un validador se conservan tal como llegan: los validadores propios deben informar solo identificadores seguros, sin datos personales ni secretos. El conteo representa invocaciones efectivas al proveedor; un error previo a la selección informa cero intentos.
 
 El retry es opt-in y solo opera sobre fallos marcados explícitamente como transitorios. La espera usa backoff acotado y puede respetar un `Retry-After` mayor. Un timeout ambiguo o una respuesta de servidor con aceptación desconocida no se reintenta automáticamente: sin idempotencia eso puede duplicar el mensaje.
 
