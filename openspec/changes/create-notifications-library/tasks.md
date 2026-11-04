@@ -31,11 +31,11 @@ Líneas/fase: 1:500–800; 2:600–1.000; 3:1.000–1.700; 4:600–1.000; 5:900�
 
 ## Fase 3: Adaptadores offline
 
-- [ ] 3.1 SendGrid/Mailgun: request/auth/payload exactos, sender propio para mismo Email; `202`+`X-Message-ID`, `200`(`id`,`message`).
-- [ ] 3.2 Twilio/FCM: contratos exactos; `201`(`sid`,`status`), `200`(`name`); `429`/`503` transitorios con delay; timeout=aceptación desconocida; rechazo/excepción diferenciados.
-- [ ] 3.3 Conexión preaceptación transitoria; `2xx` inesperado/body malformado sin retry ni ID inventado; fixtures deterministas, secretos/bodies/causas no expuestos.
-- [ ] 3.4 Construcción: credencial obligatoria ausente/sender inválido→error seguro sin invocaciones; sólo Twilio→construye sin credenciales Email/Push.
-- [ ] 3.5 Verificar SendGrid→Mailgun variando sólo default (mismo consumidor/notificación).
+- [x] 3.1 SendGrid/Mailgun: request/auth/payload exactos, sender propio para mismo Email; `202`+`X-Message-ID`, `200`(`id`,`message`).
+- [x] 3.2 Twilio/FCM: contratos exactos; `201`(`sid`,`status`), `200`(`name`); `429`/`503` transitorios con delay; timeout=aceptación desconocida; rechazo/excepción diferenciados.
+- [x] 3.3 Conexión preaceptación transitoria; `2xx` inesperado/body malformado sin retry ni ID inventado; fixtures deterministas, secretos/bodies/causas no expuestos.
+- [x] 3.4 Construcción: credencial obligatoria ausente/sender inválido→error seguro sin invocaciones; sólo Twilio→construye sin credenciales Email/Push.
+- [x] 3.5 Verificar SendGrid→Mailgun variando sólo default (mismo consumidor/notificación).
 
 ## Fase 4: Async y lotes
 

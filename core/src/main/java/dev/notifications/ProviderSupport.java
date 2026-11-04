@@ -1,12 +1,29 @@
 package dev.notifications;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
 final class ProviderSupport {
     private ProviderSupport() { }
+
+    static String basicToken(String username, String credential) {
+        return Base64.getEncoder().encodeToString((username + ":" + credential).getBytes(StandardCharsets.UTF_8));
+    }
+
+    static boolean hasText(String value) {
+        return value != null && !value.isBlank();
+    }
+
+    static String requireField(SimulatedResponse response, String field) {
+        if (response.body().get(field) instanceof String value && hasText(value)) {
+            return value;
+        }
+        throw new ProviderFailure(ProviderFailure.Kind.UNEXPECTED_RESPONSE);
+    }
 
     static SimulatedResponse exchange(SimulatedTransport transport, SimulatedRequest request) {
         try {
