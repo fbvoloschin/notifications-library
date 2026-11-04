@@ -55,6 +55,7 @@ import dev.notifications.EmailNotification;
 import dev.notifications.NotificationClient;
 import dev.notifications.NotificationValidators;
 import dev.notifications.ProviderAcceptance;
+import dev.notifications.SendException;
 import dev.notifications.SendGridProvider;
 import dev.notifications.SendRequest;
 
@@ -69,13 +70,17 @@ public final class EmailQuickStart {
                 .build();
 
         var email = new EmailNotification("reviewer@example.com", "Build complete", "Ready for review");
-        ProviderAcceptance result = client.send(new SendRequest(email));
-        System.out.printf("Accepted by %s; attempts=%d%n", result.provider(), result.attempts());
+        try {
+            ProviderAcceptance result = client.send(new SendRequest(email));
+            System.out.printf("Accepted by %s; attempts=%d%n", result.provider(), result.attempts());
+        } catch (SendException error) {
+            System.err.printf("Send failed: %s; correlation=%s%n", error.reason(), error.correlationId());
+        }
     }
 }
 ```
 
-El ejemplo usa valores de muestra: el adaptador no contacta a SendGrid ni valida credenciales contra una cuenta. Los nombres de proveedores son sensibles a mayúsculas/minúsculas. Se puede elegir uno por envío con `new SendRequest(email, "mailgun")`; si no se indica, se usa el predeterminado del canal.
+El ejemplo usa valores de muestra: el adaptador no contacta a SendGrid ni valida credenciales contra una cuenta. Los nombres de proveedores son sensibles a mayúsculas/minúsculas. Una vez registrado Mailgun como se muestra más abajo, se puede elegir por envío con `new SendRequest(email, "mailgun")`; si no se indica, se usa el predeterminado del canal.
 
 ### Canales y proveedores incluidos
 
@@ -85,6 +90,8 @@ El ejemplo usa valores de muestra: el adaptador no contacta a SendGrid ni valida
 | Email / Mailgun | API key, dominio y remitente | `POST /v3/{domain}/messages`, Basic `api:<key>` y multipart | `200` con `id` y `message` |
 | SMS / Twilio | Account SID, token y número remitente | `POST /2010-04-01/Accounts/{AccountSid}/Messages.json`, Basic y form-urlencoded | `201` con `sid` y `status` |
 | Push / FCM | Proyecto y token OAuth | `POST /v1/projects/{projectId}/messages:send`, Bearer y JSON | `200` con `name` |
+
+La [demo completa](examples/src/main/java/dev/notifications/demo/Demo.java) muestra también cómo registrar y enviar SMS y Push.
 
 La validación local es acumulativa y sucede antes de invocar al proveedor:
 
@@ -171,7 +178,8 @@ public final class InboxDemo {
 ## API y manejo de fallos
 
 - `send(SendRequest)` ejecuta sincrónicamente y devuelve `ProviderAcceptance` o lanza `SendException` tipada.
-- `sendAsync` y `sendAll` devuelven `CompletableFuture`; requieren un `Executor` provisto y administrado por la aplicación. La librería no crea ni cierra ese executor.
+- `sendAsync` devuelve un `CompletableFuture<ProviderAcceptance>`; `sendAll` devuelve una lista de futures, uno por solicitud y en el orden de entrada.
+- Ambos requieren un `Executor` administrado por la aplicación: debe ejecutar fuera del hilo llamador y señalizar los rechazos con `RejectedExecutionException`, sin ejecutar inline ni descartar tareas silenciosamente. La librería no lo crea ni lo cierra.
 - Los reintentos se configuran con `RetryPolicy`; por defecto se realiza un intento. Solo se reintentan fallos clasificados explícitamente como transitorios. Ante una aceptación desconocida no se reintenta, para evitar duplicados.
 - Los listeners reciben `RETRYING`, `ACCEPTED` o `FAILED`. No hay evento `SENT`: la aceptación no acredita entrega final. Los listeners son síncronos, deben ser breves y tolerar concurrencia.
 - Los errores exponen una categoría segura, no credenciales, cuerpos crudos ni mensajes de excepción del proveedor.
