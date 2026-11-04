@@ -19,7 +19,7 @@ Líneas/fase: 1:500–800; 2:600–1.000; 3:1.000–1.700; 4:600–1.000; 5:900�
 
 - [ ] 1.1 Alinear `design.md`/specs: correlation ID único por envío, layout `core`/`examples`; README inicial con limitaciones/faltantes/porqués.
 - [x] 1.2 Crear `openspec/config.yaml` (`apply.tdd: true`, `testing.test_command: mvn -q -B clean verify`) e inicializar `openspec/changes/create-notifications-library/state.yaml`.
-- [ ] 1.3 JDK 21 (`JAVA_HOME`, `mvn -version`); crear `pom.xml` agregador, `core/pom.xml` (JAR), `examples/pom.xml` (demo); Java 21/JUnit.
+- [x] 1.3 JDK 21 (`JAVA_HOME`, `mvn -version`); crear `pom.xml` agregador, `core/pom.xml` (JAR), `examples/pom.xml` (demo); Java 21/JUnit.
 - [ ] 1.4 Crear en `core/src/{main,test}/java/dev/notifications/`: modelos inmutables, API pública y `SendException` tipado/seguro.
 - [ ] 1.5 `NotificationClientBuilder`: config Java sin carga externa; routing inmutable; duplicados de canal/proveedor (case-sensitive) y segundo default rechazados sin reemplazo.
 
