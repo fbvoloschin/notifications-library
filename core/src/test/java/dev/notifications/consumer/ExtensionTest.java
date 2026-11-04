@@ -1,14 +1,14 @@
 package dev.notifications.consumer;
 
 import dev.notifications.Channel;
-import dev.notifications.EmailNotification;
 import dev.notifications.Notification;
 import dev.notifications.NotificationClient;
-import dev.notifications.NotificationValidators;
-import dev.notifications.PushNotification;
 import dev.notifications.SendException;
 import dev.notifications.SendRequest;
-import dev.notifications.SmsNotification;
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
+import dev.notifications.channels.PushNotification;
+import dev.notifications.channels.SmsNotification;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

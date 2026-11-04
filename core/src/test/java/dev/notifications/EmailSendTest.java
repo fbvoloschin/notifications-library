@@ -1,5 +1,6 @@
 package dev.notifications;
 
+import dev.notifications.channels.EmailNotification;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;

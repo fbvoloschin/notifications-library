@@ -1,4 +1,7 @@
-package dev.notifications;
+package dev.notifications.channels;
+
+import dev.notifications.Channel;
+import dev.notifications.Notification;
 
 /** SMS content; the selected provider supplies the configured sender. */
 public record SmsNotification(String recipient, String body) implements Notification {

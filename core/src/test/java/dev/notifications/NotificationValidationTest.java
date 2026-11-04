@@ -1,5 +1,9 @@
 package dev.notifications;
 
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
+import dev.notifications.channels.PushNotification;
+import dev.notifications.channels.SmsNotification;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

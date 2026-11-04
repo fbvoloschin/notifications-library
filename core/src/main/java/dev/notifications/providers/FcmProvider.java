@@ -1,7 +1,7 @@
 package dev.notifications.providers;
 
 import dev.notifications.NotificationProvider;
-import dev.notifications.PushNotification;
+import dev.notifications.channels.PushNotification;
 
 import java.util.HashMap;
 import java.util.Map;

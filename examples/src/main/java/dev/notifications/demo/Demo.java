@@ -1,12 +1,12 @@
 package dev.notifications.demo;
 
-import dev.notifications.EmailNotification;
 import dev.notifications.NotificationClient;
-import dev.notifications.NotificationValidators;
 import dev.notifications.ProviderAcceptance;
-import dev.notifications.PushNotification;
 import dev.notifications.SendRequest;
-import dev.notifications.SmsNotification;
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
+import dev.notifications.channels.PushNotification;
+import dev.notifications.channels.SmsNotification;
 import dev.notifications.providers.FcmProvider;
 import dev.notifications.providers.MailgunProvider;
 import dev.notifications.providers.SendGridProvider;
