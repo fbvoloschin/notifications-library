@@ -9,12 +9,14 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.IntPredicate;
 import org.junit.jupiter.api.Test;
 
@@ -34,26 +36,42 @@ class AsyncSendTest {
     @Test
     void sendsOnlyWhenTheHostRunsTheQueuedTask() throws InterruptedException {
         var worker = new AtomicReference<Thread>();
+        var observed = new AtomicReference<CompletableFuture<ProviderAcceptance>>();
+        var published = new AtomicReference<SendEvent>();
         var executor = new ControlledExecutor();
-        var client = client(executor, email -> {
+        var client = builder(executor, email -> {
             worker.set(Thread.currentThread());
             return Optional.of(email.subject());
-        });
+        }).addListener(event -> {
+            assertSame(worker.get(), Thread.currentThread());
+            assertFalse(observed.get().isDone());
+            published.set(event);
+        }).build();
 
         var result = client.sendAsync(request("queued"));
+        observed.set(result);
 
         assertFalse(result.isDone());
         assertNull(worker.get());
         executor.run(0);
         assertNotEquals(Thread.currentThread(), worker.get());
         assertEquals(Optional.of("queued"), result.join().providerMessageId());
+        assertEquals(SendEvent.Type.ACCEPTED, published.get().type());
+        assertEquals(result.join().correlationId(), published.get().correlationId());
     }
 
     @Test
     void missingAndRejectingExecutorsReturnTypedAdmissionFailuresWithNoProvider() {
         NotificationProvider<EmailNotification> forbidden = email -> fail("No inline or provider invocation");
-        var missing = client(null, forbidden);
-        var rejecting = client(command -> { throw new RejectedExecutionException("private executor details"); }, forbidden);
+        var events = new ArrayList<SendEvent>();
+        var caller = Thread.currentThread();
+        Consumer<SendEvent> listener = event -> {
+            assertSame(caller, Thread.currentThread());
+            events.add(event);
+        };
+        var missing = builder(null, forbidden).addListener(listener).build();
+        var rejecting = builder(command -> { throw new RejectedExecutionException("private executor details"); }, forbidden)
+                .addListener(listener).build();
 
         var absentFailure = failure(missing.sendAsync(request("no executor")), SendException.Reason.EXECUTION_REJECTED);
         var rejectFailure = failure(rejecting.sendAsync(request("rejected")), SendException.Reason.EXECUTION_REJECTED);
@@ -66,18 +84,41 @@ class AsyncSendTest {
             assertFalse(failure.toString().contains("private executor details"));
         }
         assertNotEquals(absentFailure.correlationId(), rejectFailure.correlationId());
+        assertEquals(List.of(absentFailure.correlationId(), rejectFailure.correlationId()),
+                events.stream().map(SendEvent::correlationId).toList());
+        for (var event : events) {
+            assertEquals(SendEvent.Type.FAILED, event.type());
+            assertEquals(Optional.of(SendException.Reason.EXECUTION_REJECTED), event.reason());
+            assertEquals(0, event.attempts());
+            assertEquals(Optional.empty(), event.provider());
+            assertFalse(event.toString().contains("private executor details"));
+        }
     }
 
     @Test
     void joinAndGetExposeTheSameTypedFailureFromTheSyncFlow() throws InterruptedException {
         var executor = new ControlledExecutor();
+        var events = new ArrayList<SendEvent>();
+        var observed = new AtomicReference<CompletableFuture<ProviderAcceptance>>();
         var client = NotificationClient.builder().executor(executor)
                 .registerChannel(EmailNotification.CHANNEL, email -> {
-                    throw new IllegalArgumentException("private validator details");
+                    if (email.subject().equals("unexpected")) {
+                        throw new IllegalArgumentException("private validator details");
+                    }
+                    return List.of();
                 })
-                .registerProvider(EmailNotification.CHANNEL, "provider", email -> fail("Validation must run first"), true)
+                .registerProvider(EmailNotification.CHANNEL, "provider", email -> Optional.of(email.subject()), true)
+                .addListener(event -> {
+                    events.add(event);
+                    if (event.type() == SendEvent.Type.FAILED) {
+                        assertFalse(observed.get().isDone());
+                    }
+                })
                 .build();
-        var result = client.sendAsync(request("unexpected"));
+        var results = client.sendAll(List.of(request("unexpected"), request("independent")));
+        var result = results.getFirst();
+        observed.set(result);
+        executor.run(0);
         executor.run(0);
 
         var failure = failure(result, SendException.Reason.UNEXPECTED_VALIDATION);
@@ -86,6 +127,15 @@ class AsyncSendTest {
         assertNull(failure.getCause());
         assertEquals(0, failure.attempts());
         assertEquals(Optional.empty(), failure.provider());
+        assertEquals(Optional.of("independent"), results.get(1).join().providerMessageId());
+        assertEquals(List.of(SendEvent.Type.FAILED, SendEvent.Type.ACCEPTED),
+                events.stream().map(SendEvent::type).toList());
+        var event = events.getFirst();
+        assertEquals(Optional.of(SendException.Reason.UNEXPECTED_VALIDATION), event.reason());
+        assertEquals(Optional.empty(), event.provider());
+        assertEquals(0, event.attempts());
+        assertEquals(failure.correlationId(), event.correlationId());
+        assertFalse(event.toString().contains("private validator details"));
     }
 
     @Test
@@ -120,8 +170,10 @@ class AsyncSendTest {
         NotificationProvider<EmailNotification> forbidden = email -> fail("No sends in an empty batch");
         Executor noSubmissions = runnable -> fail("No submissions in an empty batch");
 
-        assertEquals(List.of(), client(noSubmissions, forbidden).sendAll(List.of()));
-        assertEquals(List.of(), client(null, forbidden).sendAll(List.of()));
+        for (var executor : Arrays.asList(noSubmissions, null)) {
+            var client = builder(executor, forbidden).addListener(event -> fail("No events for an empty batch")).build();
+            assertEquals(List.of(), client.sendAll(List.of()));
+        }
     }
 
     @Test
@@ -130,14 +182,15 @@ class AsyncSendTest {
         var resume = new CountDownLatch(1);
         var completed = new AtomicBoolean();
         var executor = new ControlledExecutor();
-        var client = client(executor, email -> {
+        var events = new CopyOnWriteArrayList<SendEvent>();
+        var client = builder(executor, email -> {
             if (email.subject().equals("paused")) {
                 started.countDown();
                 await(resume);
                 completed.set(true);
             }
             return Optional.of(email.subject());
-        });
+        }).addListener(events::add).build();
         var results = client.sendAll(List.of(request("paused"), request("independent")));
         var paused = executor.start(0);
         try {
@@ -153,16 +206,21 @@ class AsyncSendTest {
         assertTrue(completed.get());
         assertThrows(CancellationException.class, results.get(0)::join);
         assertFalse(executor.closed);
+        assertEquals(List.of(SendEvent.Type.ACCEPTED, SendEvent.Type.ACCEPTED),
+                events.stream().map(SendEvent::type).toList());
+        assertEquals(results.get(1).join().correlationId(), events.getFirst().correlationId());
+        assertNotEquals(events.get(0).correlationId(), events.get(1).correlationId());
     }
 
     @Test
     void cancellationBeforeDispatchStillRunsTheSend() throws InterruptedException {
         var seen = new AtomicReference<String>();
         var executor = new ControlledExecutor();
-        var client = client(executor, email -> {
+        var events = new ArrayList<SendEvent>();
+        var client = builder(executor, email -> {
             seen.set(email.subject());
             return Optional.of(email.subject());
-        });
+        }).addListener(events::add).build();
         var result = client.sendAsync(request("queued cancellation"));
 
         assertTrue(result.cancel(false));
@@ -170,6 +228,7 @@ class AsyncSendTest {
 
         assertEquals("queued cancellation", seen.get());
         assertThrows(CancellationException.class, result::join);
+        assertEquals(List.of(SendEvent.Type.ACCEPTED), events.stream().map(SendEvent::type).toList());
     }
 
     @Test
@@ -189,10 +248,14 @@ class AsyncSendTest {
     }
 
     private static NotificationClient client(Executor executor, NotificationProvider<EmailNotification> provider) {
+        return builder(executor, provider).build();
+    }
+
+    private static NotificationClientBuilder builder(Executor executor, NotificationProvider<EmailNotification> provider) {
         var builder = NotificationClient.builder()
                 .registerChannel(EmailNotification.CHANNEL, NotificationValidators::validateEmail)
                 .registerProvider(EmailNotification.CHANNEL, "provider", provider, true);
-        return (executor == null ? builder : builder.executor(executor)).build();
+        return executor == null ? builder : builder.executor(executor);
     }
 
     private static SendRequest request(String subject) {
