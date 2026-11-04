@@ -1,0 +1,83 @@
+schema: spec-driven
+
+context: |
+  Tech stack: Java 21 + Maven, library (not an application), multi-module `core` + `examples`.
+  Architecture: framework-agnostic core, typed channel registry, strategy-per-provider adapters.
+  Testing: JUnit 5 (Jupiter) planned via maven-surefire; runner NOT installed yet (no pom.xml).
+  Docs: English in code and Javadoc, Spanish in README and DESIGN.
+  Persistence: openspec (filesystem). Engram only for cross-session notes.
+
+# Hard project decision. Forward-looking: it applies from the first commit,
+# even though no pom.xml or src/ exists yet.
+strict_tdd: true
+
+apply:
+  tdd: true
+  test_command: mvn -q -B clean verify
+  cycle: RED-GREEN-REFACTOR
+  note: >-
+    RED must be observed before GREEN. No production class is written unless a
+    failing JUnit 5 test justifies it. The runner is not installed yet (no
+    pom.xml), so the first apply work unit creates the build before the cycle
+    can be verified.
+
+testing:
+  strict_tdd: true
+  runner_installed: false
+  detected: 2026-11-04
+  build_tool: Maven
+  jdk: "21"
+  framework: JUnit 5 (Jupiter)
+  test_command: mvn -q -B clean verify
+  build_command: mvn -q -B clean verify
+  layers:
+    unit: planned
+    integration: planned (in-memory provider fixtures, zero network)
+    e2e: not applicable (library; demo smoke test instead)
+  coverage:
+    available: false
+    command: ""
+    threshold: 0
+  quality:
+    linter: none detected
+    type_checker: javac via Maven
+    formatter: none detected
+
+language:
+  code: English
+  javadoc: English
+  readme: Spanish
+  design: Spanish
+  glossary: Spanish
+
+architecture:
+  framework_agnostic: true
+  configuration: Java-only builder API (no Spring, XML, properties files, ServiceLoader or runtime discovery)
+  modules:
+    - core
+    - examples
+  base_package: dev.notifications
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - State explicitly what is out of scope
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Document architecture decisions with rationale and tradeoffs
+    - Keep the core framework-agnostic; all configuration stays in Java code
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+    - Slice work units into reviewable PRs under the 400-line budget
+  apply:
+    - Follow existing code patterns
+    - No production code without a failing test observed first
+    - Run `mvn -q -B clean verify` at the end of every work unit
+  verify:
+    - 'Run `mvn -q -B clean verify` with JDK 21.'
+    - 'Include fresh build and test evidence in the verification report before claiming success.'
+  archive:
+    - Warn before merging destructive deltas

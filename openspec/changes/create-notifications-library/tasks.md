@@ -3,22 +3,22 @@
 ## Review Workload Forecast
 
 Estimated changed lines: 4,000–7,000.
-Decision needed before apply: Yes
+Decision needed before apply: No
 Chained PRs recommended: Yes
-Chain strategy: pending
+Chain strategy: feature-branch-chain
 400-line budget risk: High
 
 ### Suggested Work Units
 
 Líneas/fase: 1:500–800; 2:600–1.000; 3:1.000–1.700; 4:600–1.000; 5:900–1.600; 6:400–900.
-`ask-on-risk`: subdividir fases en PRs verificables ≤400 líneas, tests incluidos.
+`auto-chain`: subdividir fases en cortes verificables ≤400 líneas, tests incluidos. `size:exception` sólo para el PR final verificado desde una rama de entrega limpia hacia `main`.
 
 **TDD:** RED observado, GREEN mínimo, REFACTOR verde. `mvn -q -B clean verify` por fase desde 1.3.
 
 ## Fase 1: Fundación y configuración
 
 - [ ] 1.1 Alinear `design.md`/specs: correlation ID único por envío, layout `core`/`examples`; README inicial con limitaciones/faltantes/porqués.
-- [ ] 1.2 Crear `openspec/config.yaml` (`apply.tdd: true`, `verify.test_command: mvn -q -B clean verify`) e inicializar `openspec/changes/create-notifications-library/state.yaml`.
+- [x] 1.2 Crear `openspec/config.yaml` (`apply.tdd: true`, `testing.test_command: mvn -q -B clean verify`) e inicializar `openspec/changes/create-notifications-library/state.yaml`.
 - [ ] 1.3 JDK 21 (`JAVA_HOME`, `mvn -version`); crear `pom.xml` agregador, `core/pom.xml` (JAR), `examples/pom.xml` (demo); Java 21/JUnit.
 - [ ] 1.4 Crear en `core/src/{main,test}/java/dev/notifications/`: modelos inmutables, API pública y `SendException` tipado/seguro.
 - [ ] 1.5 `NotificationClientBuilder`: config Java sin carga externa; routing inmutable; duplicados de canal/proveedor (case-sensitive) y segundo default rechazados sin reemplazo.
@@ -39,7 +39,7 @@ Líneas/fase: 1:500–800; 2:600–1.000; 3:1.000–1.700; 4:600–1.000; 5:900�
 
 ## Fase 4: Async y lotes
 
-- [ ] 4.1 `sendAsync`: executor del host encola fuera del caller; ausencia/rechazo = error tipado sin llamadas ni inline; `join/get` conservan causa.
+- [ ] 4.1 `sendAsync`: executor controlado del host ejecuta fuera del caller; ausencia o `RejectedExecutionException` = error tipado sin llamadas ni inline; `join/get` conservan causa. Documentar que el executor no puede usar caller-runs ni descarte silencioso.
 - [ ] 4.2 `sendAll`: orden de entrada con ejecución desordenada, resultados mixtos aislados; vacío sin tareas/llamadas, incluso sin executor.
 - [ ] 4.3 cancelación: `cancel(true)` sólo afecta observación; proveedor pausado termina, ítem independiente sigue, executor nunca se cierra.
 
@@ -55,3 +55,4 @@ Líneas/fase: 1:500–800; 2:600–1.000; 3:1.000–1.700; 4:600–1.000; 5:900�
 - [ ] 6.1 Crear `examples/src/main/java/dev/notifications/demo/Demo.java` y smoke test: Email/SMS/Push simulados, sin framework/cuentas/red.
 - [ ] 6.2 Completar `README.md` español y Javadoc inglés: Maven/Gradle, quickstart, API/extensión, proveedores/referencias, credenciales/rotación y disclosure real de IA.
 - [ ] 6.3 `Dockerfile`/`.dockerignore`: build, demo `--network none`; JDK 21 (`mvn -version`), `mvn -q -B clean verify`.
+- [ ] 6.4 Desde un clon limpio, seguir el README: instalar y usar el JAR en un consumidor Java independiente; cambiar SendGrid por Mailgun sólo por configuración y registrar un canal propio sin editar el core. Ejecutar los ejemplos sin cuentas ni red en runtime.

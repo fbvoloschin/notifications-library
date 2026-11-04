@@ -1,0 +1,98 @@
+change: create-notifications-library
+project: notifications-library
+schema: spec-driven
+persistence: openspec
+created: 2026-11-04
+updated: 2026-11-04
+
+# Survives compaction: read this before re-deriving state from artifacts.
+current_phase: apply
+next_recommended: sdd-apply
+
+phases:
+  proposal:
+    status: complete
+    artifact: openspec/changes/create-notifications-library/proposal.md
+  spec:
+    status: complete
+    artifact: openspec/changes/create-notifications-library/specs/
+    domains:
+      - library-configuration
+      - notification-routing
+      - notification-providers
+      - notification-delivery
+  design:
+    status: complete
+    artifact: openspec/changes/create-notifications-library/design.md
+  tasks:
+    status: complete
+    artifact: openspec/changes/create-notifications-library/tasks.md
+  apply:
+    status: in_progress
+    artifact: openspec/changes/create-notifications-library/tasks.md
+    note: Updates tasks.md in place, marking checkboxes as work lands.
+  verify:
+    status: pending
+    artifact: openspec/changes/create-notifications-library/verify-report.md
+  archive:
+    status: pending
+    artifact: openspec/changes/archive/YYYY-MM-DD-create-notifications-library/
+
+artifacts:
+  config: openspec/config.yaml
+  glossary: GLOSSARY.md
+  specs:
+    - openspec/changes/create-notifications-library/specs/library-configuration/spec.md
+    - openspec/changes/create-notifications-library/specs/notification-delivery/spec.md
+    - openspec/changes/create-notifications-library/specs/notification-providers/spec.md
+    - openspec/changes/create-notifications-library/specs/notification-routing/spec.md
+
+decisions:
+  delivery_strategy: auto-chain
+  chain_strategy: feature-branch-chain
+  final_integration: clean-branch-single-pr
+  final_integration_size_exception: true
+  review_budget_lines: 400
+  main_specs_created: false
+  strict_tdd: true
+  test_runner_installed: false
+
+pending_decisions: []
+
+work_units:
+  - id: 1
+    name: Fundación y configuración
+    estimated_lines: 500-800
+    tasks: [1.1, 1.2, 1.3, 1.4, 1.5]
+    status: pending
+  - id: 2
+    name: Validación y routing síncrono
+    estimated_lines: 600-1000
+    tasks: [2.1, 2.2, 2.3]
+    status: pending
+  - id: 3
+    name: Adaptadores offline
+    estimated_lines: 1000-1700
+    tasks: [3.1, 3.2, 3.3, 3.4, 3.5]
+    status: pending
+  - id: 4
+    name: Async y lotes
+    estimated_lines: 600-1000
+    tasks: [4.1, 4.2, 4.3]
+    status: pending
+  - id: 5
+    name: Retry y eventos
+    estimated_lines: 900-1600
+    tasks: [5.1, 5.2, 5.3, 5.4]
+    status: pending
+  - id: 6
+    name: Ejemplos y entrega
+    estimated_lines: 400-900
+    tasks: [6.1, 6.2, 6.3]
+    status: pending
+
+notes:
+  - Work unit 1.2 (this bootstrap) is satisfied by openspec/config.yaml + this file.
+  - Every work unit must be sliced into PRs of 400 changed lines or fewer, tests included.
+  - Verify with `mvn -q -B clean verify`; no execution is possible until pom.xml exists.
+  - Existing artifacts are authoritative. Do not rewrite proposal/specs/design/tasks during apply.

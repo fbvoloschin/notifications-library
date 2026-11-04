@@ -8,7 +8,7 @@ Define asynchronous execution, retry rules, and events for the same send flow as
 
 ### Requirement: Async sends share the sync contract
 
-`sendAsync(SendRequest)` MUST return `CompletableFuture<ProviderAcceptance>` and submit the sync flow to a host-owned executor without waiting for delivery on the caller's thread. It MUST complete with the sync acceptance or typed failure. A missing executor or rejected submission MUST fail the future as an execution error with zero attempts; the client MUST NOT run the send inline or close the executor.
+`sendAsync(SendRequest)` MUST submit the sync flow and return a `CompletableFuture<ProviderAcceptance>` without waiting. The future MUST complete with the sync result or typed failure. For async and batch, the host executor MUST dispatch off-thread without waiting and throw `RejectedExecutionException` on rejection (no caller-runs or silent discard). Missing executor or rejection MUST yield a typed execution error with zero attempts. The client MUST NOT run sends inline or close the executor.
 
 #### Scenario: An accepted task has not run yet
 

@@ -50,7 +50,8 @@ Code and Javadoc MUST be in English; README and design guidance MUST be in Spani
 
 - **GIVEN** a clean checkout and no provider accounts
 - **WHEN** a reviewer follows the README
-- **THEN** they can install the library, run the examples, find the extension guide, and read the AI disclosure without revealing hidden text
+- **THEN** they can install and use the JAR from a standalone Java consumer, run the examples, and read the AI-use note in the README
+- **AND** the guide shows how to switch the default Email provider from SendGrid to Mailgun without changing the send call and how to register a custom channel without modifying the library
 
 ### Requirement: Meaningful tests and offline demo
 
