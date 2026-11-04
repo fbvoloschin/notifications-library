@@ -24,7 +24,7 @@ La operación sincrónica es la fuente de verdad. La selección explícita de pr
 
 Las dependencias van hacia el núcleo y las abstracciones, no desde el núcleo hacia proveedores concretos. Cada adaptador implementa el mismo contrato tipado; no hay un `switch` central por proveedor.
 
-La API común y los contratos de extensión viven en `dev.notifications`; los adaptadores y sus fixtures offline viven en `dev.notifications.providers`, dentro del mismo JAR de `core`. Los adaptadores reutilizan las comprobaciones públicas de sintaxis de email y teléfono de `NotificationValidators`.
+Dentro del mismo JAR de `core`, la API común y los contratos de extensión viven en `dev.notifications`, los tipos y validadores incorporados en `dev.notifications.channels`, y los adaptadores y sus fixtures offline en `dev.notifications.providers`. Los proveedores dependen de los canales incorporados y de los contratos del núcleo, nunca al revés. Reutilizan las comprobaciones públicas de sintaxis de email y teléfono de `NotificationValidators`.
 
 ## Adaptadores simulados
 

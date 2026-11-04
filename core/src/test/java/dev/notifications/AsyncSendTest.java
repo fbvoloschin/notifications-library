@@ -1,5 +1,7 @@
 package dev.notifications;
 
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;

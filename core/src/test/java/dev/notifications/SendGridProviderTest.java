@@ -1,5 +1,7 @@
 package dev.notifications;
 
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
 import dev.notifications.providers.SendGridProvider;
 import dev.notifications.providers.SimulatedRequest;
 import dev.notifications.providers.SimulatedResponse;

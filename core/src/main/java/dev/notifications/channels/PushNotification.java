@@ -1,4 +1,7 @@
-package dev.notifications;
+package dev.notifications.channels;
+
+import dev.notifications.Channel;
+import dev.notifications.Notification;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

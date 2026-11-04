@@ -51,12 +51,12 @@ El artefacto consumible es `core/target/notifications-library-1.0.0-SNAPSHOT.jar
 La librería no depende de Spring ni de otro framework y no busca configuración en variables de entorno, propiedades o archivos. El programa consumidor puede leer sus secretos y pasarlos explícitamente:
 
 ```java
-import dev.notifications.EmailNotification;
 import dev.notifications.NotificationClient;
-import dev.notifications.NotificationValidators;
 import dev.notifications.ProviderAcceptance;
 import dev.notifications.SendException;
 import dev.notifications.SendRequest;
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
 import dev.notifications.providers.SendGridProvider;
 
 public final class EmailQuickStart {
@@ -84,9 +84,9 @@ El ejemplo usa valores de muestra: el adaptador no contacta a SendGrid ni valida
 
 ### Canales y proveedores incluidos
 
-Los adaptadores y sus fixtures simulados están en `dev.notifications.providers`. El contrato `NotificationProvider` y el tipo de error `ProviderFailure` permanecen en `dev.notifications` para proveedores propios.
+Los tipos y validadores de los canales incorporados están en `dev.notifications.channels`. Los adaptadores y sus fixtures simulados están en `dev.notifications.providers`. El cliente y los contratos genéricos de extensión, incluido `NotificationProvider` con su error `ProviderFailure`, permanecen en `dev.notifications`.
 
-**Migración desde snapshots anteriores:** los cuatro adaptadores y `SimulatedRequest`, `SimulatedResponse` y `SimulatedTransport` cambiaron de `dev.notifications` a `dev.notifications.providers`. Actualizá los imports de esos tipos y recompilá tu consumidor: no hay clases puente con los nombres anteriores.
+**Migración desde snapshots anteriores:** `EmailNotification`, `SmsNotification`, `PushNotification` y `NotificationValidators` cambiaron de `dev.notifications` a `dev.notifications.channels`. Los cuatro adaptadores y `SimulatedRequest`, `SimulatedResponse` y `SimulatedTransport` pasaron de `dev.notifications` a `dev.notifications.providers`. Actualizá los imports de los tipos que uses y recompilá tu consumidor: no hay clases puente con los nombres anteriores. El JAR y sus coordenadas Maven no cambian.
 
 | Canal / proveedor | Configuración propia | Solicitud simulada | Éxito simulado |
 |---|---|---|---|
@@ -117,10 +117,10 @@ Las solicitudes simuladas reproducen endpoint, autenticación y estructura de da
 Configurá ambos proveedores con sus propios remitentes y cambiá solo `preferMailgun`. La llamada de envío no cambia:
 
 ```java
-import dev.notifications.EmailNotification;
 import dev.notifications.NotificationClient;
-import dev.notifications.NotificationValidators;
 import dev.notifications.SendRequest;
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
 import dev.notifications.providers.MailgunProvider;
 import dev.notifications.providers.SendGridProvider;
 
@@ -203,11 +203,11 @@ public final class InboxDemo {
 Para async, pasá un executor que administre la aplicación. Java 21 permite crear uno por tarea virtual; el cliente no lo cierra:
 
 ```java
-import dev.notifications.EmailNotification;
 import dev.notifications.NotificationClient;
-import dev.notifications.NotificationValidators;
 import dev.notifications.RetryPolicy;
 import dev.notifications.SendRequest;
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
 import dev.notifications.providers.SendGridProvider;
 import java.time.Duration;
 import java.util.concurrent.Executors;

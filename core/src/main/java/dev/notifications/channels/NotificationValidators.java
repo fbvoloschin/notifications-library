@@ -1,4 +1,4 @@
-package dev.notifications;
+package dev.notifications.channels;
 
 import java.util.ArrayList;
 import java.util.List;

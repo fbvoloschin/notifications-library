@@ -1,5 +1,8 @@
 package dev.notifications;
 
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
+import dev.notifications.channels.PushNotification;
 import dev.notifications.providers.FcmProvider;
 import dev.notifications.providers.SimulatedResponse;
 import java.time.Duration;

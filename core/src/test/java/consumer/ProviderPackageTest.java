@@ -1,10 +1,10 @@
 package consumer;
 
-import dev.notifications.EmailNotification;
 import dev.notifications.NotificationClient;
 import dev.notifications.NotificationProvider;
-import dev.notifications.NotificationValidators;
 import dev.notifications.SendRequest;
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
 import dev.notifications.providers.SendGridProvider;
 import dev.notifications.providers.SimulatedRequest;
 import dev.notifications.providers.SimulatedResponse;

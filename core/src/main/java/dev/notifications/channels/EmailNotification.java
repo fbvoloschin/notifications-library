@@ -1,4 +1,7 @@
-package dev.notifications;
+package dev.notifications.channels;
+
+import dev.notifications.Channel;
+import dev.notifications.Notification;
 
 /** Email content; the selected provider supplies the configured sender. */
 public record EmailNotification(String recipient, String subject, String body) implements Notification {

@@ -1,8 +1,8 @@
 package dev.notifications.providers;
 
 import dev.notifications.NotificationProvider;
-import dev.notifications.NotificationValidators;
-import dev.notifications.SmsNotification;
+import dev.notifications.channels.NotificationValidators;
+import dev.notifications.channels.SmsNotification;
 
 import java.util.Map;
 import java.util.Optional;

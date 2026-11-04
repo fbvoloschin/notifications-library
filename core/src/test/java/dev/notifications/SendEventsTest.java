@@ -1,5 +1,7 @@
 package dev.notifications;
 
+import dev.notifications.channels.EmailNotification;
+import dev.notifications.channels.NotificationValidators;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
