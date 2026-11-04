@@ -44,14 +44,20 @@ Construction MUST validate required values and supported local formats for regis
 
 ### Requirement: Consumer documentation and AI disclosure
 
-Code and Javadoc MUST be in English; README and design guidance MUST be in Spanish. The README MUST cover local installation for Maven and Gradle consumers, quick start, provider setup and official references, the public API, extension, credential handling and rotation, and intentional omissions with their reasons. It MUST visibly and honestly describe actual AI tool use, workflow, and decisions retained by the author.
+Code and Javadoc MUST be in English; README and design guidance MUST be in Spanish. The README MUST cover Maven and Gradle installation, quick start, provider setup and official references, public API, extension, credential handling and rotation, and intentional omissions with reasons. The project design document (`DESIGN.md`) MUST visibly and honestly describe actual AI tool use, workflow, and decisions retained by the author.
 
 #### Scenario: A reviewer follows the README from a clean checkout
 
 - **GIVEN** a clean checkout and no provider accounts
 - **WHEN** a reviewer follows the README
-- **THEN** they can install and use the JAR from a standalone Java consumer, run the examples, and read the AI-use note in the README
+- **THEN** they can install and use the JAR from a standalone Java consumer and run the examples
 - **AND** the guide shows how to switch the default Email provider from SendGrid to Mailgun without changing the send call and how to register a custom channel without modifying the library
+
+#### Scenario: A reviewer finds AI-use transparency in the design document
+
+- **GIVEN** a reviewer wants to understand how AI contributed to the project
+- **WHEN** they consult `DESIGN.md`
+- **THEN** they can find the tools used, how they supported the workflow, and which decisions remained with the author
 
 #### Scenario: Limitations are explicit
 
