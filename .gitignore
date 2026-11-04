@@ -26,3 +26,11 @@ dependency-reduced-pom.xml
 # OS
 .DS_Store
 Thumbs.db
+
+# Local agent tooling
+/.atl/
+
+# Tooling interno de desarrollo
+/.agents/
+/openspec/
+/skills-lock.json
