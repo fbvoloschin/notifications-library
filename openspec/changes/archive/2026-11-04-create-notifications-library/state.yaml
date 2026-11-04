@@ -6,16 +6,16 @@ created: 2026-11-04
 updated: 2026-11-04
 
 # Survives compaction: read this before re-deriving state from artifacts.
-current_phase: archive
-next_recommended: sdd-archive
+current_phase: complete
+next_recommended: none
 
 phases:
   proposal:
     status: complete
-    artifact: openspec/changes/create-notifications-library/proposal.md
+    artifact: openspec/changes/archive/2026-11-04-create-notifications-library/proposal.md
   spec:
     status: complete
-    artifact: openspec/changes/create-notifications-library/specs/
+    artifact: openspec/changes/archive/2026-11-04-create-notifications-library/specs/
     domains:
       - library-configuration
       - notification-routing
@@ -23,34 +23,35 @@ phases:
       - notification-delivery
   design:
     status: complete
-    artifact: openspec/changes/create-notifications-library/design.md
+    artifact: openspec/changes/archive/2026-11-04-create-notifications-library/design.md
   tasks:
     status: complete
-    artifact: openspec/changes/create-notifications-library/tasks.md
+    artifact: openspec/changes/archive/2026-11-04-create-notifications-library/tasks.md
   apply:
     status: complete
-    artifact: openspec/changes/create-notifications-library/tasks.md
+    artifact: openspec/changes/archive/2026-11-04-create-notifications-library/tasks.md
     note: Updates tasks.md in place, marking checkboxes as work lands.
   verify:
     status: complete
-    artifact: openspec/changes/create-notifications-library/verify-report.md
+    artifact: openspec/changes/archive/2026-11-04-create-notifications-library/verify-report.md
   archive:
-    status: pending
+    status: complete
     artifact: openspec/changes/archive/2026-11-04-create-notifications-library/
-    note: Main specs synced; archive move remains pending.
+    note: Verification PASS WITH WARNINGS; 24/24 tasks complete; 55 tests passed; two non-critical warnings documented.
 
 artifacts:
   config: openspec/config.yaml
   glossary: GLOSSARY.md
-  proposal: openspec/changes/create-notifications-library/proposal.md
-  design: openspec/changes/create-notifications-library/design.md
-  tasks: openspec/changes/create-notifications-library/tasks.md
-  verification: openspec/changes/create-notifications-library/verify-report.md
+  proposal: openspec/changes/archive/2026-11-04-create-notifications-library/proposal.md
+  design: openspec/changes/archive/2026-11-04-create-notifications-library/design.md
+  tasks: openspec/changes/archive/2026-11-04-create-notifications-library/tasks.md
+  verification: openspec/changes/archive/2026-11-04-create-notifications-library/verify-report.md
+  archive_report: openspec/changes/archive/2026-11-04-create-notifications-library/archive-report.md
   specs:
-    - openspec/changes/create-notifications-library/specs/library-configuration/spec.md
-    - openspec/changes/create-notifications-library/specs/notification-delivery/spec.md
-    - openspec/changes/create-notifications-library/specs/notification-providers/spec.md
-    - openspec/changes/create-notifications-library/specs/notification-routing/spec.md
+    - openspec/changes/archive/2026-11-04-create-notifications-library/specs/library-configuration/spec.md
+    - openspec/changes/archive/2026-11-04-create-notifications-library/specs/notification-delivery/spec.md
+    - openspec/changes/archive/2026-11-04-create-notifications-library/specs/notification-providers/spec.md
+    - openspec/changes/archive/2026-11-04-create-notifications-library/specs/notification-routing/spec.md
 
 decisions:
   delivery_strategy: auto-chain
@@ -102,5 +103,5 @@ notes:
   - All 24 tasks are checked; `mvn -B clean verify` passed with 55 tests (54 core, 1 demo).
   - Docker build and `--network none` runtime passed; an external Maven consumer used the JAR.
   - Keep implementation changes uncommitted until the user requests commits or pushes.
-  - Main specs synced; archive move remains pending. Verification PASS WITH WARNINGS, 55 tests passed, 24/24 tasks complete.
+  - Archive completed on 2026-11-04; verification PASS WITH WARNINGS (55 tests passed, two non-critical warnings documented), with 24/24 tasks complete.
   - Preserve the clean-delivery-branch decision for final integration.
