@@ -24,6 +24,8 @@ La operación sincrónica es la fuente de verdad. La selección explícita de pr
 
 Las dependencias van hacia el núcleo y las abstracciones, no desde el núcleo hacia proveedores concretos. Cada adaptador implementa el mismo contrato tipado; no hay un `switch` central por proveedor.
 
+La API común y los contratos de extensión viven en `dev.notifications`; los adaptadores y sus fixtures offline viven en `dev.notifications.providers`, dentro del mismo JAR de `core`. Los adaptadores reutilizan las comprobaciones públicas de sintaxis de email y teléfono de `NotificationValidators`.
+
 ## Adaptadores simulados
 
 Cada proveedor modela endpoint, autenticación, payload y respuesta de éxito según su documentación oficial. Los `SimulatedTransport` de prueba permiten capturar requests y suministrar fixtures sin implementar el protocolo HTTP real. FCM cubre el núcleo token/notificación/datos; no modela claves reservadas ni opciones específicas de cada plataforma. Las credenciales usadas en ejemplos son ficticias: validarlas localmente no prueba que una cuenta exista o tenga permisos.

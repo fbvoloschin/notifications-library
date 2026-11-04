@@ -56,8 +56,8 @@ import dev.notifications.NotificationClient;
 import dev.notifications.NotificationValidators;
 import dev.notifications.ProviderAcceptance;
 import dev.notifications.SendException;
-import dev.notifications.SendGridProvider;
 import dev.notifications.SendRequest;
+import dev.notifications.providers.SendGridProvider;
 
 public final class EmailQuickStart {
     public static void main(String[] args) {
@@ -83,6 +83,10 @@ public final class EmailQuickStart {
 El ejemplo usa valores de muestra: el adaptador no contacta a SendGrid ni valida credenciales contra una cuenta. Los nombres de proveedores son sensibles a mayúsculas/minúsculas. Una vez registrado Mailgun como se muestra más abajo, se puede elegir por envío con `new SendRequest(email, "mailgun")`; si no se indica, se usa el predeterminado del canal.
 
 ### Canales y proveedores incluidos
+
+Los adaptadores y sus fixtures simulados están en `dev.notifications.providers`. El contrato `NotificationProvider` y el tipo de error `ProviderFailure` permanecen en `dev.notifications` para proveedores propios.
+
+**Migración desde snapshots anteriores:** los cuatro adaptadores y `SimulatedRequest`, `SimulatedResponse` y `SimulatedTransport` cambiaron de `dev.notifications` a `dev.notifications.providers`. Actualizá los imports de esos tipos y recompilá tu consumidor: no hay clases puente con los nombres anteriores.
 
 | Canal / proveedor | Configuración propia | Solicitud simulada | Éxito simulado |
 |---|---|---|---|
@@ -114,11 +118,11 @@ Configurá ambos proveedores con sus propios remitentes y cambiá solo `preferMa
 
 ```java
 import dev.notifications.EmailNotification;
-import dev.notifications.MailgunProvider;
 import dev.notifications.NotificationClient;
 import dev.notifications.NotificationValidators;
-import dev.notifications.SendGridProvider;
 import dev.notifications.SendRequest;
+import dev.notifications.providers.MailgunProvider;
+import dev.notifications.providers.SendGridProvider;
 
 public final class ProviderSwitchDemo {
     public static void main(String[] args) {
@@ -203,8 +207,8 @@ import dev.notifications.EmailNotification;
 import dev.notifications.NotificationClient;
 import dev.notifications.NotificationValidators;
 import dev.notifications.RetryPolicy;
-import dev.notifications.SendGridProvider;
 import dev.notifications.SendRequest;
+import dev.notifications.providers.SendGridProvider;
 import java.time.Duration;
 import java.util.concurrent.Executors;
 

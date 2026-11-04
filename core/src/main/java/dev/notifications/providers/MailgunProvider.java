@@ -1,4 +1,8 @@
-package dev.notifications;
+package dev.notifications.providers;
+
+import dev.notifications.EmailNotification;
+import dev.notifications.NotificationProvider;
+import dev.notifications.NotificationValidators;
 
 import java.util.Map;
 import java.util.Optional;

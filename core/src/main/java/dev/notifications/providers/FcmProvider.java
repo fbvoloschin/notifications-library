@@ -1,4 +1,7 @@
-package dev.notifications;
+package dev.notifications.providers;
+
+import dev.notifications.NotificationProvider;
+import dev.notifications.PushNotification;
 
 import java.util.HashMap;
 import java.util.Map;

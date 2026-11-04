@@ -1,4 +1,6 @@
-package dev.notifications;
+package dev.notifications.providers;
+
+import dev.notifications.ProviderFailure;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;

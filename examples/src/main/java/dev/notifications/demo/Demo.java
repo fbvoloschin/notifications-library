@@ -1,16 +1,16 @@
 package dev.notifications.demo;
 
 import dev.notifications.EmailNotification;
-import dev.notifications.FcmProvider;
-import dev.notifications.MailgunProvider;
 import dev.notifications.NotificationClient;
 import dev.notifications.NotificationValidators;
 import dev.notifications.ProviderAcceptance;
 import dev.notifications.PushNotification;
-import dev.notifications.SendGridProvider;
 import dev.notifications.SendRequest;
 import dev.notifications.SmsNotification;
-import dev.notifications.TwilioProvider;
+import dev.notifications.providers.FcmProvider;
+import dev.notifications.providers.MailgunProvider;
+import dev.notifications.providers.SendGridProvider;
+import dev.notifications.providers.TwilioProvider;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
