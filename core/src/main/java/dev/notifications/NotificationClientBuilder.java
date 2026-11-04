@@ -3,10 +3,22 @@ package dev.notifications;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 
 /** Registers typed channels and named providers in Java. */
 public final class NotificationClientBuilder {
     private final Map<String, NotificationClient.Route> routes = new HashMap<>();
+    private Executor executor;
+
+    /**
+     * Configures the host-owned executor used by asynchronous sends and batches.
+     * It must dispatch off the caller thread without waiting for completion and reject via
+     * {@link java.util.concurrent.RejectedExecutionException}, not run inline or silently discard.
+     */
+    public NotificationClientBuilder executor(Executor executor) {
+        this.executor = Objects.requireNonNull(executor, "Executor is required");
+        return this;
+    }
 
     public <N extends Notification> NotificationClientBuilder registerChannel(
             Channel<N> channel, NotificationValidator<N> validator) {
@@ -50,6 +62,6 @@ public final class NotificationClientBuilder {
         } catch (RuntimeException ignored) {
             throw new IllegalArgumentException("Invalid provider configuration");
         }
-        return new NotificationClient(Map.copyOf(routes));
+        return new NotificationClient(Map.copyOf(routes), executor);
     }
 }

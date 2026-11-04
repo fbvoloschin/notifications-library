@@ -39,8 +39,8 @@ Líneas/fase: 1:500–800; 2:600–1.000; 3:1.000–1.700; 4:600–1.000; 5:900�
 
 ## Fase 4: Async y lotes
 
-- [ ] 4.1 `sendAsync`: executor controlado del host ejecuta fuera del caller; ausencia o `RejectedExecutionException` = error tipado sin llamadas ni inline; `join/get` conservan causa. Documentar que el executor no puede usar caller-runs ni descarte silencioso.
-- [ ] 4.2 `sendAll`: orden de entrada con ejecución desordenada, resultados mixtos aislados; vacío sin tareas/llamadas, incluso sin executor.
+- [x] 4.1 `sendAsync`: executor controlado del host ejecuta fuera del caller; ausencia o `RejectedExecutionException` = error tipado sin llamadas ni inline; `join/get` conservan causa. Documentar que el executor no puede usar caller-runs ni descarte silencioso.
+- [x] 4.2 `sendAll`: orden de entrada con ejecución desordenada, resultados mixtos aislados; vacío sin tareas/llamadas, incluso sin executor.
 - [ ] 4.3 cancelación: `cancel(true)` sólo afecta observación; proveedor pausado termina, ítem independiente sigue, executor nunca se cierra.
 
 ## Fase 5: Retry y eventos

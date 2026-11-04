@@ -9,7 +9,8 @@ public final class SendException extends RuntimeException {
     public enum Reason {
         UNKNOWN_CHANNEL, CHANNEL_TYPE_MISMATCH, INVALID_NOTIFICATION, UNEXPECTED_VALIDATION,
         MISSING_DEFAULT, UNKNOWN_PROVIDER, PROVIDER_TRANSIENT, PROVIDER_REJECTED,
-        PROVIDER_ACCEPTANCE_UNKNOWN, UNEXPECTED_PROVIDER_RESPONSE, UNEXPECTED_PROVIDER_FAILURE
+        PROVIDER_ACCEPTANCE_UNKNOWN, UNEXPECTED_PROVIDER_RESPONSE, UNEXPECTED_PROVIDER_FAILURE,
+        EXECUTION_REJECTED
     }
 
     private final Reason reason;
@@ -32,6 +33,7 @@ public final class SendException extends RuntimeException {
 
     public Reason reason() { return reason; }
     public UUID correlationId() { return correlationId; }
+    /** The known channel identifier, or {@code null} if unavailable. */
     public String channel() { return channel; }
     public Optional<String> provider() { return Optional.ofNullable(provider); }
     public int attempts() { return attempts; }
