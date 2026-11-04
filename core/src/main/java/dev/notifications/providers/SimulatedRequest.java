@@ -1,4 +1,4 @@
-package dev.notifications;
+package dev.notifications.providers;
 
 import java.util.Map;
 

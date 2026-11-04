@@ -52,7 +52,11 @@ public final class NotificationValidators {
         return List.copyOf(violations);
     }
 
-    static boolean validEmailAddress(String address) {
+    /**
+     * Checks the supported unquoted ASCII mailbox syntax with a dotted DNS domain.
+     * Null is invalid. Does not resolve DNS or verify mailbox existence or ownership.
+     */
+    public static boolean validEmailAddress(String address) {
         if (address == null || address.length() > 254) {
             return false;
         }
@@ -61,7 +65,11 @@ public final class NotificationValidators {
                 && DOMAIN.matcher(address.substring(at + 1)).matches();
     }
 
-    static boolean validPhoneNumber(String number) {
+    /**
+     * Checks local E.164 form: {@code +} and 8–15 ASCII digits, starting with a nonzero digit.
+     * Null is invalid. Does not verify number reachability or ownership.
+     */
+    public static boolean validPhoneNumber(String number) {
         return number != null && E164.matcher(number).matches();
     }
 

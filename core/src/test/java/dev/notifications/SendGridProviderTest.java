@@ -1,5 +1,9 @@
 package dev.notifications;
 
+import dev.notifications.providers.SendGridProvider;
+import dev.notifications.providers.SimulatedRequest;
+import dev.notifications.providers.SimulatedResponse;
+import dev.notifications.providers.SimulatedTransport;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;

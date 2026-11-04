@@ -1,4 +1,4 @@
-package dev.notifications;
+package dev.notifications.providers;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
