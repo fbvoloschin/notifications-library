@@ -6,4 +6,7 @@ import java.util.Optional;
 @FunctionalInterface
 public interface NotificationProvider<N extends Notification> {
     Optional<String> send(N notification);
+
+    /** Checks only this provider's local configuration before the client is built. */
+    default void validateConfiguration() { }
 }

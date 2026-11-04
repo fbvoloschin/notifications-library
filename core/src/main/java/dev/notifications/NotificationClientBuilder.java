@@ -1,7 +1,6 @@
 package dev.notifications;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,13 +33,23 @@ public final class NotificationClientBuilder {
             throw new IllegalArgumentException("Provider name or default is already registered");
         }
         var providers = new HashMap<>(route.providers());
-        providers.put(name, notification -> provider.send(channel.type().cast(notification)));
+        providers.put(name, new NotificationClient.RegisteredProvider(
+                notification -> provider.send(channel.type().cast(notification)), provider::validateConfiguration));
         routes.put(channel.id(), new NotificationClient.Route(channel, route.validator(),
                 Map.copyOf(providers), useAsDefault ? name : route.defaultProvider()));
         return this;
     }
 
     public NotificationClient build() {
+        try {
+            for (var route : routes.values()) {
+                for (var provider : route.providers().values()) {
+                    provider.validateConfiguration().run();
+                }
+            }
+        } catch (RuntimeException ignored) {
+            throw new IllegalArgumentException("Invalid provider configuration");
+        }
         return new NotificationClient(Map.copyOf(routes));
     }
 }

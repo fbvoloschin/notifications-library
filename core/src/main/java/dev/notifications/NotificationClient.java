@@ -9,8 +9,10 @@ import static dev.notifications.SendException.Reason.*;
 
 /** Sends notifications through an immutable registry of configured providers. */
 public final class NotificationClient {
+    record RegisteredProvider(NotificationProvider<Notification> sender, Runnable validateConfiguration) { }
+
     record Route(Channel<?> channel, NotificationValidator<Notification> validator,
-                 Map<String, NotificationProvider<Notification>> providers, String defaultProvider) { }
+                 Map<String, RegisteredProvider> providers, String defaultProvider) { }
 
     private final Map<String, Route> routes;
 
@@ -54,8 +56,10 @@ public final class NotificationClient {
         }
 
         try {
-            var messageId = Objects.requireNonNull(provider.send(notification));
+            var messageId = Objects.requireNonNull(provider.sender().send(notification));
             return new ProviderAcceptance(channel.id(), providerName, 1, messageId, correlationId);
+        } catch (ProviderFailure classified) {
+            throw new SendException(classified.kind().reason, correlationId, channel.id(), providerName, 1, List.of());
         } catch (RuntimeException ignored) {
             throw new SendException(UNEXPECTED_PROVIDER_FAILURE, correlationId, channel.id(),
                     providerName, 1, List.of());
