@@ -1,5 +1,6 @@
 package dev.notifications;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,10 +20,14 @@ public final class NotificationClient {
 
     private final Map<String, Route> routes;
     private final Executor executor;
+    private final RetryPolicy retryPolicy;
+    private final RetryWait retryWait;
 
-    NotificationClient(Map<String, Route> routes, Executor executor) {
+    NotificationClient(Map<String, Route> routes, Executor executor, RetryPolicy retryPolicy, RetryWait retryWait) {
         this.routes = routes;
         this.executor = executor;
+        this.retryPolicy = retryPolicy;
+        this.retryWait = retryWait;
     }
 
     public static NotificationClientBuilder builder() {
@@ -110,14 +115,38 @@ public final class NotificationClient {
             throw unresolved(UNKNOWN_PROVIDER, correlationId, channel.id());
         }
 
+        return sendToProvider(notification, channel.id(), providerName, provider.sender(), correlationId);
+    }
+
+    private ProviderAcceptance sendToProvider(Notification notification, String channel, String providerName,
+                                              NotificationProvider<Notification> provider, UUID correlationId) {
+        var backoff = retryPolicy.initialDelay();
+        for (int attempt = 1; ; attempt++) {
+            try {
+                var messageId = Objects.requireNonNull(provider.send(notification));
+                return new ProviderAcceptance(channel, providerName, attempt, messageId, correlationId);
+            } catch (ProviderFailure classified) {
+                if (classified.kind() != ProviderFailure.Kind.TRANSIENT || attempt >= retryPolicy.maxAttempts()) {
+                    throw new SendException(classified.kind().reason, correlationId, channel, providerName, attempt, List.of());
+                }
+                var minimum = classified.retryAfter();
+                awaitRetry(backoff.compareTo(minimum) >= 0 ? backoff : minimum,
+                        correlationId, channel, providerName, attempt);
+                backoff = retryPolicy.nextBackoff(backoff);
+            } catch (RuntimeException ignored) {
+                throw new SendException(UNEXPECTED_PROVIDER_FAILURE, correlationId, channel, providerName, attempt, List.of());
+            }
+        }
+    }
+
+    private void awaitRetry(Duration delay, UUID id, String channel, String provider, int attempts) {
         try {
-            var messageId = Objects.requireNonNull(provider.sender().send(notification));
-            return new ProviderAcceptance(channel.id(), providerName, 1, messageId, correlationId);
-        } catch (ProviderFailure classified) {
-            throw new SendException(classified.kind().reason, correlationId, channel.id(), providerName, 1, List.of());
+            retryWait.await(delay);
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+            throw new SendException(INTERRUPTED, id, channel, provider, attempts, List.of());
         } catch (RuntimeException ignored) {
-            throw new SendException(UNEXPECTED_PROVIDER_FAILURE, correlationId, channel.id(),
-                    providerName, 1, List.of());
+            throw new SendException(UNEXPECTED_RETRY_WAIT, id, channel, provider, attempts, List.of());
         }
     }
 

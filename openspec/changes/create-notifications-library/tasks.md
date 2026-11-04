@@ -45,8 +45,8 @@ Líneas/fase: 1:500–800; 2:600–1.000; 3:1.000–1.700; 4:600–1.000; 5:900�
 
 ## Fase 5: Retry y eventos
 
-- [ ] 5.1 retry opt-in: `maxAttempts` positivo/default uno, sólo transient, mismo proveedor, conteo real; límite/otras categorías sin fallback.
-- [ ] 5.2 `RetryPolicy`+fake wait: defaults 1/30s, waits 1/2/4/4 saturados, delay 10s supera cap 4s; config inválida rechazada; interrupción restaura flag sin nuevo intento.
+- [x] 5.1 retry opt-in: `maxAttempts` positivo/default uno, sólo transient, mismo proveedor, conteo real; límite/otras categorías sin fallback.
+- [x] 5.2 `RetryPolicy`+fake wait: defaults 1/30s, waits 1/2/4/4 saturados, delay 10s supera cap 4s; config inválida rechazada; interrupción restaura flag sin nuevo intento.
 - [ ] 5.3 eventos con `Clock` fijo: ID único por envío, timestamps, listeners ordenados/aislados, terminal seguro único; validador custom/rechazo de admisión emiten `FAILED`, cero intentos/sin proveedor.
 - [ ] 5.4 secuencias: `RETRYING(1)`→`ACCEPTED(2)`, mismo ID; espera interrumpida sin `RETRYING`; cancelación conserva un `ACCEPTED`, sin `FAILED` sintético; vacío sin eventos.
 

@@ -9,6 +9,8 @@ import java.util.concurrent.Executor;
 public final class NotificationClientBuilder {
     private final Map<String, NotificationClient.Route> routes = new HashMap<>();
     private Executor executor;
+    private RetryPolicy retryPolicy = RetryPolicy.defaults();
+    private RetryWait retryWait = Thread::sleep;
 
     /**
      * Configures the host-owned executor used by asynchronous sends and batches.
@@ -17,6 +19,18 @@ public final class NotificationClientBuilder {
      */
     public NotificationClientBuilder executor(Executor executor) {
         this.executor = Objects.requireNonNull(executor, "Executor is required");
+        return this;
+    }
+
+    /** Configures retries; the default makes a single provider attempt. */
+    public NotificationClientBuilder retryPolicy(RetryPolicy retryPolicy) {
+        this.retryPolicy = Objects.requireNonNull(retryPolicy, "Retry policy is required");
+        return this;
+    }
+
+    /** Replaces the default interruptible thread sleep, e.g. for deterministic tests. */
+    public NotificationClientBuilder retryWait(RetryWait retryWait) {
+        this.retryWait = Objects.requireNonNull(retryWait, "Retry wait is required");
         return this;
     }
 
@@ -62,6 +76,6 @@ public final class NotificationClientBuilder {
         } catch (RuntimeException ignored) {
             throw new IllegalArgumentException("Invalid provider configuration");
         }
-        return new NotificationClient(Map.copyOf(routes), executor);
+        return new NotificationClient(Map.copyOf(routes), executor, retryPolicy, retryWait);
     }
 }
