@@ -6,8 +6,8 @@ created: 2026-11-04
 updated: 2026-11-04
 
 # Survives compaction: read this before re-deriving state from artifacts.
-current_phase: apply
-next_recommended: sdd-apply
+current_phase: archive
+next_recommended: sdd-archive
 
 phases:
   proposal:
@@ -28,19 +28,24 @@ phases:
     status: complete
     artifact: openspec/changes/create-notifications-library/tasks.md
   apply:
-    status: in_progress
+    status: complete
     artifact: openspec/changes/create-notifications-library/tasks.md
     note: Updates tasks.md in place, marking checkboxes as work lands.
   verify:
-    status: pending
+    status: complete
     artifact: openspec/changes/create-notifications-library/verify-report.md
   archive:
     status: pending
-    artifact: openspec/changes/archive/YYYY-MM-DD-create-notifications-library/
+    artifact: openspec/changes/archive/2026-11-04-create-notifications-library/
+    note: Main specs synced; archive move remains pending.
 
 artifacts:
   config: openspec/config.yaml
   glossary: GLOSSARY.md
+  proposal: openspec/changes/create-notifications-library/proposal.md
+  design: openspec/changes/create-notifications-library/design.md
+  tasks: openspec/changes/create-notifications-library/tasks.md
+  verification: openspec/changes/create-notifications-library/verify-report.md
   specs:
     - openspec/changes/create-notifications-library/specs/library-configuration/spec.md
     - openspec/changes/create-notifications-library/specs/notification-delivery/spec.md
@@ -53,9 +58,9 @@ decisions:
   final_integration: clean-branch-single-pr
   final_integration_size_exception: true
   review_budget_lines: 400
-  main_specs_created: false
+  main_specs_created: true
   strict_tdd: true
-  test_runner_installed: false
+  test_runner_installed: true
 
 pending_decisions: []
 
@@ -64,35 +69,38 @@ work_units:
     name: Fundación y configuración
     estimated_lines: 500-800
     tasks: [1.1, 1.2, 1.3, 1.4, 1.5]
-    status: pending
+    status: complete
   - id: 2
     name: Validación y routing síncrono
     estimated_lines: 600-1000
     tasks: [2.1, 2.2, 2.3]
-    status: pending
+    status: complete
   - id: 3
     name: Adaptadores offline
     estimated_lines: 1000-1700
     tasks: [3.1, 3.2, 3.3, 3.4, 3.5]
-    status: pending
+    status: complete
   - id: 4
     name: Async y lotes
     estimated_lines: 600-1000
     tasks: [4.1, 4.2, 4.3]
-    status: pending
+    status: complete
   - id: 5
     name: Retry y eventos
     estimated_lines: 900-1600
     tasks: [5.1, 5.2, 5.3, 5.4]
-    status: pending
+    status: complete
   - id: 6
     name: Ejemplos y entrega
     estimated_lines: 400-900
-    tasks: [6.1, 6.2, 6.3]
-    status: pending
+    tasks: [6.1, 6.2, 6.3, 6.4]
+    status: complete
 
 notes:
   - Work unit 1.2 (this bootstrap) is satisfied by openspec/config.yaml + this file.
-  - Every work unit must be sliced into PRs of 400 changed lines or fewer, tests included.
-  - Verify with `mvn -q -B clean verify`; no execution is possible until pom.xml exists.
-  - Existing artifacts are authoritative. Do not rewrite proposal/specs/design/tasks during apply.
+  - Strict TDD uses JDK 21, Maven, and JUnit 5; runner is installed and verification passed.
+  - All 24 tasks are checked; `mvn -B clean verify` passed with 55 tests (54 core, 1 demo).
+  - Docker build and `--network none` runtime passed; an external Maven consumer used the JAR.
+  - Keep implementation changes uncommitted until the user requests commits or pushes.
+  - Main specs synced; archive move remains pending. Verification PASS WITH WARNINGS, 55 tests passed, 24/24 tasks complete.
+  - Preserve the clean-delivery-branch decision for final integration.

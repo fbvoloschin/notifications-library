@@ -14,6 +14,10 @@ El flujo síncrono es la fuente de verdad. Async cambia el hilo de ejecución, n
 - Resolver canal y verificar tipo primero; validar el contenido antes de seleccionar proveedor. Sin selección no hay proveedor en el resultado de error ni en el evento. Un nombre explícito desconocido no cae al default.
 - Una excepción de un validador custom se normaliza como fallo inesperado de validación, distinto de los datos inválidos: cero intentos, sin proveedor, un evento `FAILED` seguro y sin afectar otros ítems. El lote vacío retorna una lista vacía sin tareas ni eventos, incluso sin executor.
 
+## Empaquetado
+
+El reactor Maven contiene dos módulos: `core` genera el artefacto consumible `notifications-library`; `examples` depende de ese JAR y contiene el punto de entrada de demostración. La clase `Demo` nunca se empaqueta dentro del JAR de la biblioteca.
+
 ## Decisiones y límites
 
 | Decisión | Motivo y tradeoff |
@@ -22,7 +26,7 @@ El flujo síncrono es la fuente de verdad. Async cambia el hilo de ejecución, n
 | Adaptadores con requests estructuradas y fixtures en memoria | Se prueban método, ruta, esquema de auth, campos y respuestas sin implementar codificación HTTP real ni usar SDKs. Validación local de credenciales y remitentes no demuestra autorización remota. |
 | Clasificación en el adaptador, política en el cliente | El adaptador devuelve aceptación o fallo clasificado con espera mínima opcional. Para el reintento `n >= 1`, el backoff es `min(maxBackoff, initialDelay * 2^(n-1))`, saturado al tope sin overflow. Se espera el mayor valor entre backoff y la indicación del proveedor, que puede superar ese tope. Defaults: 1 segundo inicial, tope de 30 segundos y un solo intento (sin retry). No hay fallback, deduplicación ni garantía de entrega final. |
 | Executor del consumidor, sin pool interno | Permite controlar el ciclo de vida y el tamaño del pool. Debe encolar fuera del hilo llamador y notificar rechazos; no se admite ejecución inline ni descarte silencioso. El backoff espera en el hilo del envío. Cancelar el future sólo cancela la observación, no el trabajo: la ejecución y su evento terminal siguen su curso, aunque el future permanezca cancelado. |
-| Listeners locales, sin broker | Se invocan en el hilo del envío (en el llamador para fallos de admisión), antes de completar el resultado; deben ser breves y soportar concurrencia. El cliente asigna un id por envío, también presente en el resultado o error, y usa un reloj inyectable. Las excepciones de listeners no cambian el resultado. |
+| Listeners locales, sin broker | Se invocan en el hilo del envío (en el llamador para fallos de admisión), antes de completar el resultado; deben ser breves y soportar concurrencia. El cliente asigna un UUID distinto a cada envío, también presente en el resultado o error, y usa un reloj inyectable. Las excepciones de listeners no cambian el resultado. |
 
 Las notificaciones incorporadas son inmutables. Los validadores y proveedores custom deben soportar llamadas concurrentes si se usan con async. Las secuencias de fixtures para retries se aíslan por envío para que el lote no dependa del orden de ejecución.
 

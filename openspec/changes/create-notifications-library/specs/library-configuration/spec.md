@@ -44,7 +44,7 @@ Construction MUST validate required values and supported local formats for regis
 
 ### Requirement: Consumer documentation and AI disclosure
 
-Code and Javadoc MUST be in English; README and design guidance MUST be in Spanish. The README MUST cover local installation for Maven and Gradle consumers, quick start, provider setup and official references, the public API, extension, and credential handling and rotation. It MUST visibly and honestly describe actual AI tool use, workflow, and decisions retained by the author.
+Code and Javadoc MUST be in English; README and design guidance MUST be in Spanish. The README MUST cover local installation for Maven and Gradle consumers, quick start, provider setup and official references, the public API, extension, credential handling and rotation, and intentional omissions with their reasons. It MUST visibly and honestly describe actual AI tool use, workflow, and decisions retained by the author.
 
 #### Scenario: A reviewer follows the README from a clean checkout
 
@@ -52,6 +52,12 @@ Code and Javadoc MUST be in English; README and design guidance MUST be in Spani
 - **WHEN** a reviewer follows the README
 - **THEN** they can install and use the JAR from a standalone Java consumer, run the examples, and read the AI-use note in the README
 - **AND** the guide shows how to switch the default Email provider from SendGrid to Mailgun without changing the send call and how to register a custom channel without modifying the library
+
+#### Scenario: Limitations are explicit
+
+- **GIVEN** a reviewer evaluates whether to use the library in production
+- **WHEN** they read the README
+- **THEN** they can distinguish provider acceptance from end-user delivery and see that networking, SDKs, durable queues, and idempotency are intentionally omitted to keep this challenge deterministic and offline
 
 ### Requirement: Meaningful tests and offline demo
 
