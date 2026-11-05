@@ -1,0 +1,11 @@
+.git
+.agents
+.atl
+openspec
+skills-lock.json
+**/target
+.idea
+.vscode
+.env
+.env.*
+*.pem
