@@ -56,4 +56,13 @@ Para los pasos de uso, ejemplos y omisiones intencionales, ver [README.md](READM
 
 ## Uso de IA
 
-Se usaron OpenCode (incluyendo Kimi), Codex y DeepSeek para explorar y revisar requisitos, proponer y refinar especificaciones/diseño/tareas, y asistir en la implementación. La persona autora definió el alcance, evaluó las propuestas, tomó las decisiones finales y verificó el comportamiento con tests y documentación oficial de proveedores. La IA fue una herramienta de apoyo; los proveedores de este repositorio son simulaciones y no se enviaron notificaciones reales.
+
+Se usaron OpenCode (incluyendo Kimi), Codex y DeepSeek para explorar y revisar
+requisitos, proponer y refinar especificaciones, diseño y tareas, y asistir en
+la implementación. La persona autora definió el alcance, evaluó las propuestas
+y tomó las decisiones finales.
+
+Se ejecutaron tests automatizados y, con asistencia de IA, se contrastaron
+aspectos básicos de los adaptadores simulados con la documentación oficial de
+los proveedores. Esta revisión no constituye una prueba de integración real
+ni una verificación exhaustiva de sus APIs. No se enviaron notificaciones reales.
