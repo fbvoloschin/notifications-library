@@ -19,6 +19,26 @@ java -cp examples/target/classes:core/target/classes dev.notifications.demo.Demo
 
 La salida informa `ACCEPTED` para Email, SMS y Push. Significa que el proveedor simulado aceptó la solicitud, no que un destinatario recibió el mensaje.
 
+## Ejemplos adicionales
+
+Después de compilar con `mvn -B clean verify`, podés ejecutar cada ejemplo por separado (macOS/Linux):
+
+```bash
+java -cp examples/target/classes:core/target/classes dev.notifications.demo.ProviderSwitchExample
+java -cp examples/target/classes:core/target/classes dev.notifications.demo.AsyncExample
+java -cp examples/target/classes:core/target/classes dev.notifications.demo.RetryExample
+java -cp examples/target/classes:core/target/classes dev.notifications.demo.CustomChannelExample
+```
+
+| Ejemplo | Qué demuestra |
+|---|---|
+| `ProviderSwitchExample` | Envía emails con SendGrid y Mailgun usando la misma operación. |
+| `AsyncExample` | El llamador continúa mientras un envío asíncrono permanece pendiente. |
+| `RetryExample` | Un fallo transitorio se recupera en el segundo intento. |
+| `CustomChannelExample` | Registra y usa un canal `inbox` sin cambiar el núcleo. |
+
+Son simulaciones offline con datos ficticios. Para que el resultado sea reproducible, el ejemplo asíncrono controla cuándo termina el proveedor y el de reintentos reemplaza la espera real. En una aplicación normal se usa la espera predeterminada o una implementación apropiada.
+
 ## Consumir el JAR
 
 Luego de ejecutar `mvn -B clean install`, agregá la dependencia a un consumidor Maven:
@@ -231,7 +251,7 @@ public final class AsyncQuickStart {
 }
 ```
 
-`maxAttempts` incluye el primer intento; `3` permite hasta dos reintentos. La espera predeterminada usa backoff exponencial acotado.
+`join()` espera el resultado antes de cerrar el executor; para ver al llamador continuar mientras el envío está pendiente, ejecutá `AsyncExample`. `maxAttempts` incluye el primer intento; `3` permite hasta dos reintentos. La espera predeterminada usa backoff exponencial acotado.
 
 ## Seguridad y rotación de credenciales
 
