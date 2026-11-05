@@ -278,4 +278,24 @@ docker build -t notifications-demo .
 docker run --rm --network none notifications-demo
 ```
 
-La imagen ejecuta la misma demo sin cuentas ni red durante el runtime. El build sí necesita acceso inicial a las imágenes base y dependencias Maven, salvo que ya estén disponibles localmente.
+La imagen ejecuta la demo principal sin cuentas ni red durante el runtime. El build sí necesita acceso inicial a las imágenes base y dependencias Maven, salvo que ya estén disponibles localmente.
+
+Para ejecutar cada ejemplo adicional, usá la misma imagen construida arriba e indicá su clase:
+
+```bash
+# Cambio de proveedor
+docker run --rm --network none --entrypoint java notifications-demo \
+  -cp /app/examples:/app/core dev.notifications.demo.ProviderSwitchExample
+
+# Envío asíncrono
+docker run --rm --network none --entrypoint java notifications-demo \
+  -cp /app/examples:/app/core dev.notifications.demo.AsyncExample
+
+# Reintentos simulados
+docker run --rm --network none --entrypoint java notifications-demo \
+  -cp /app/examples:/app/core dev.notifications.demo.RetryExample
+
+# Canal propio
+docker run --rm --network none --entrypoint java notifications-demo \
+  -cp /app/examples:/app/core dev.notifications.demo.CustomChannelExample
+```
