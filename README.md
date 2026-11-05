@@ -253,23 +253,19 @@ public final class AsyncQuickStart {
 
 `join()` espera el resultado antes de cerrar el executor; para ver al llamador continuar mientras el envío está pendiente, ejecutá `AsyncExample`. `maxAttempts` incluye el primer intento; `3` permite hasta dos reintentos. La espera predeterminada usa backoff exponencial acotado.
 
-## Seguridad y rotación de credenciales
+## Credenciales
 
-No guardes credenciales reales en el repositorio. En una integración real, la aplicación consumidora es responsable de leerlas desde su gestor de secretos o entorno y pasarlas por la API Java; la librería no las descubre por su cuenta. Evitá registrarlas en logs. Los valores de `Demo` son ficticios y no habilitan acceso a cuentas.
+La aplicación consumidora debe obtener las credenciales de forma segura y pasarlas al configurar cada proveedor. No incluyas credenciales reales en el código, el repositorio ni los logs.
 
-Al rotar una credencial real, actualizá primero el origen seguro en la aplicación y construí un cliente con el nuevo valor; la librería no lee ni recarga secretos automáticamente. Esta versión no establece conexiones reales, por lo que su validación local solo comprueba presencia y formato, no autorización remota.
+La librería no descubre ni recarga credenciales automáticamente. Para usar un valor nuevo, construí un cliente con la configuración actualizada.
 
-## Límites deliberados
+## Alcance y limitaciones
 
-| No incluido | Motivo |
-|---|---|
-| HTTP real y SDKs de proveedores | Mantener la prueba reproducible, offline y sin cuentas externas. |
-| Confirmación de entrega, plantillas y webhooks | El alcance modela envío y aceptación, no el ciclo de vida posterior del mensaje. |
-| Opciones específicas de plataformas y claves reservadas de datos FCM | Se modela el contrato HTTP v1 mínimo de token, notificación y datos string/string. |
-| Colas durables, idempotencia y rate limiting | Requieren estado operativo y políticas externas; exceden el objetivo de esta librería didáctica. |
-| Slack y publicación a Maven Central | Se priorizan los tres canales requeridos y la verificación local del artefacto. |
+Los proveedores incluidos son simulaciones: no se realizan conexiones reales ni se comprueba la autorización de las credenciales. Una aceptación simulada no confirma la entrega al destinatario.
 
-Por estas limitaciones, el proyecto es una base técnica para evaluar diseño y extensibilidad, **no un cliente de producción para enviar notificaciones reales**. Ver [DESIGN.md](DESIGN.md) para las decisiones y sus trade-offs.
+La librería no incluye confirmación de entrega, plantillas, webhooks, colas durables, idempotencia ni rate limiting. Las opciones de FCM específicas de cada plataforma y sus claves reservadas tampoco están modeladas. Slack y la publicación en Maven Central no están incluidos.
+
+Para conocer las decisiones de diseño, consultá [DESIGN.md](DESIGN.md).
 
 ## Docker offline
 
